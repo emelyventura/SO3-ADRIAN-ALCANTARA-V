@@ -1,0 +1,68 @@
+PRACTICA 1
+-----------------------------------------------------------------
+sudo dnf install gnupg2          
+sudo apt install gnupg2         
+mkdir ~/Cifrado
+cd ~/Cifrado
+echo "Este es un archivo secreto" > archivo.txt
+gpg2 -c archivo.txt
+cat archivo.txt.gpg
+gpg2 archivo.txt.gpg
+cat archivo.txt
+PRACTICA 2
+----------------------------------------------------------------------------
+sudo systemctl start httpd
+sudo systemctl enable httpd
+sudo systemctl start vsftpd
+sudo systemctl enable vsftpd
+sudo systemctl start sshd
+sudo systemctl enable sshd
+sudo systemctl status httpd
+sudo systemctl status vsftpd
+sudo systemctl status sshd
+sudo iptables -A INPUT -p tcp --dport 80 -j DROP
+sudo iptables -A INPUT -p tcp --dport 21 -j DROP
+sudo iptables -A INPUT -p tcp --dport 22 -j DROP
+sudo iptables -L -n
+sudo iptables -D INPUT -p tcp --dport 80 -j DROP
+sudo iptables -D INPUT -p tcp --dport 21 -j DROP
+sudo iptables -D INPUT -p tcp --dport 22 -j DROP
+sudo iptables -L -n
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" port port=80 protocol=tcp reject'
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" port port=21 protocol=tcp reject'
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" port port=22 protocol=tcp reject'
+sudo firewall-cmd --reload
+sudo firewall-cmd --permanent --remove-rich-rule='rule family="ipv4" port port=80 protocol=tcp reject'
+sudo firewall-cmd --permanent --remove-rich-rule='rule family="ipv4" port port=21 protocol=tcp reject'
+sudo firewall-cmd --permanent --remove-rich-rule='rule family="ipv4" port port=22 protocol=tcp reject'
+sudo firewall-cmd --reload
+
+PRACTICA 3
+----------------------------------------------------------------------------------------------
+sudo dnf install epel-release
+sudo dnf install snort snort-rules-default
+sudo apt install snort
+sudo nano /etc/snort/rules/local.rules
+alert icmp any any -> any any (msg:"ICMP ping detectado"; sid:1000001; rev:1;)
+alert tcp any any -> any 21 (msg:"Tráfico FTP detectado"; sid:1000002; rev:1;)
+alert tcp any any -> any 22 (msg:"Tráfico SSH detectado"; sid:1000003; rev:1;)
+alert tcp any any -> any 80 (msg:"Tráfico HTTP detectado"; sid:1000004; rev:1;)
+sudo snort -A console -c /etc/snort/snort.conf -i eth0
+ping <IP_VM>
+ftp <IP_VM>
+ssh <IP_VM>
+curl http://<IP_VM>/
+
+PRACTICA 4
+-----------------------------------------------------------------------------
+sudo dnf install epel-release
+sudo dnf install google-authenticator
+sudo apt install libpam-google-authenticator
+google-authenticator
+sudo nano /etc/pam.d/sshd
+auth required pam_google_authenticator.so
+sudo nano /etc/ssh/sshd_config
+ChallengeResponseAuthentication yes
+UsePAM yes
+sudo systemctl restart sshd
+ssh usuario@<IP_VM>
