@@ -1,0 +1,66 @@
+Practica 1
+--------------------------------------------
+sudo dnf install nfs-utils -y
+sudo systemctl enable nfs-server
+sudo systemctl start nfs-server
+sudo mkdir /OS3
+sudo chmod 777 /OS3
+sudo chown -R nobody:nobody /OS3
+cd /OS3
+for i in {1..100}; do touch Adrian$i.txt; done
+sudo nano /etc/exports
+# /OS3 *(rw,sync,no_root_squash)
+sudo exportfs -a
+sudo exportfs -v
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+sudo systemctl status nfs-server
+ss -tuln | grep 2049
+ip a
+sudo dnf install nfs-utils -y
+sudo mkdir /mnt/OS3
+ping -c 4 192.168.56.101
+showmount -e 192.168.56.101
+sudo mount -t nfs 192.168.56.101:/OS3 /mnt/OS3
+ls /mnt/OS3
+sudo nano /etc/fstab
+# 192.168.56.101:/OS3 /mnt/OS3 nfs default
+sudo mount -a
+sudo reboot
+ls /mnt/OS3
+
+----------------------------------
+practica 2
+----------------------------------
+sudo dnf install samba samba-client samba-common -y
+sudo systemctl enable smb
+sudo systemctl start smb
+sudo mkdir /samba
+sudo groupadd sambagrupo
+sudo useradd adrian
+sudo passwd adrian
+sudo usermod -aG sambagrupo adrian
+sudo chown -R adrian:sambagrupo /samba
+sudo chmod -R 777 /samba
+sudo smbpasswd -a adrian
+sudo nano /etc/samba/smb.conf
+-----------------------------------------
+practica 3
+-----------------------------------------
+sudo dnf install samba samba-client samba-common samba-tools krb5-workstation -y
+sudo systemctl stop smb
+sudo systemctl stop nmb
+sudo systemctl stop samba
+sudo rm -rf /etc/samba/smb.conf
+sudo rm -rf /var/lib/samba/*
+sudo rm -rf /var/cache/samba/*
+sudo rm -rf /run/samba/*
+sudo useradd lanegracubana
+sudo passwd lanegracubana
+sudo samba-tool domain provision
+sudo systemctl enable samba
+sudo systemctl start samba
+sudo samba-tool user create lanegracubana
+sudo samba-tool user list
+ip a
+sudo samba-tool domain provision
